@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.song.mapper.BookMapper">
+
+    <resultMap id="bookMap" type="book">
+        <result column="book_name" property="bookName"></result>
+    </resultMap>
+    <delete id="deleteByIds">
+        delete from books where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectByPageCondition" resultType="com.song.pojo.Book" resultMap="bookMap">
+        select * from books
+        <where>
+            <if test="book.bookName !=null and book.bookName != ''">
+                and book_name like #{book.bookName}
+            </if>
+            <if test="book.author !=null and book.author != ''">
+                and author like #{book.author}
+            </if>
+            <if test="book.publisher !=null and book.publisher != ''">
+                and publisher like #{book.publisher}
+            </if>
+        </where>
+        limit #{start},#{pageSize}
+    </select>
+    <select id="selectTotalCountByCondition" resultType="java.lang.Integer">
+        select count(*) from books
+        <where>
+            <if test="bookName != null and bookName != ''">
+                and book_name like #{bookName}
+            </if>
+            <if test="author != null and author != ''">
+                and author like #{author}
+            </if>
+            <if test="publisher != null and publisher != ''">
+                and publisher like #{publisher}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>
